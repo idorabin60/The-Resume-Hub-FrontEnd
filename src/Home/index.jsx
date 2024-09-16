@@ -7,7 +7,6 @@ function Home() {
   return (
     <>
     <div> landing scree</div>
-    <div className='flex justify-center'><UserButton/></div>
     </>
   )
 }
