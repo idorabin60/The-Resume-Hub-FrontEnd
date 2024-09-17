@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { PlusCircle } from 'lucide-react'
 import { Input } from "@/components/ui/input"
+import { v4 as uuidv4 } from 'uuid';
+
 
 import {
   Dialog,
@@ -16,6 +18,12 @@ import {
 
 function Dashboard() {
   const [openDaialog,setOpenDialog] = useState(false)
+  const [resumeTitle,setResumeTitle] = useState();
+  const onCreate = ()=>{
+    const uuid = uuidv4();
+    console.log(resumeTitle,uuid);
+    setOpenDialog(false);
+  }
   return (
     <div className='p-10 md:px-20 lg:px-32'>
       <h2 className='font-bold text-3xl mb-4'>My Resumes</h2>
@@ -34,11 +42,13 @@ function Dashboard() {
       <DialogTitle >Create Resume</DialogTitle>
       <DialogDescription>
         <p>Add job title for your CV</p>
-        <Input className="mt-2" placeholder="CS student" />
+        <Input className="mt-2" placeholder="CS student" onChange ={(e)=>{
+          setResumeTitle(e.target.value)
+        }} />
       </DialogDescription>
       <div className='flex justify-end gap-6 pt-5'>
       <Button className="bg-red-300" variant="ghost" onClick={() => setOpenDialog(false)}>Cancel</Button>
-      <Button className="bg-green-300" onClick={() => setOpenDialog(false)}>Create</Button>
+      <Button disabled={!resumeTitle} className="bg-green-300"  onClick={onCreate}>Create</Button>
       </div>
     </DialogHeader>
   </DialogContent>
