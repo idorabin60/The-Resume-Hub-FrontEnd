@@ -8,6 +8,7 @@ import SignInPage from './auth/sign-in/index.jsx'
 import Home from './Home/index.jsx'
 import Dashboard from './Dashboard/index.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
+import { Toaster } from "@/components/ui/toaster"
 import EditResume from './Dashboard/resume/[resumeid]/edit/index.jsx'
 
 
@@ -37,10 +38,14 @@ const router = createBrowserRouter([
 
 ])
 createRoot(document.getElementById('root')).render(
+<div>
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
     <RouterProvider router={router }/>
+    <Toaster />
+
     </ClerkProvider>
 
   </StrictMode>,
+  </div>
 )
