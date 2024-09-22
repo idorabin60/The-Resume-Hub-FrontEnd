@@ -12,7 +12,9 @@ function EditResume() {
     useEffect(() => {
         if (params?.resumeId) {
           GlobalApi.getResumeById(params.resumeId).then((res) => {
-            setResumeInfo(dummy);
+            console.log("LOOK HEREEEEEEEEE")
+            console.log(res.data.data)
+            setResumeInfo(res.data.data);
           });
         }
       }, [params.resumeId]);
