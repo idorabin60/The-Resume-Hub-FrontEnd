@@ -4,7 +4,7 @@ function Summery({resumeInfo}) {
     console.log(resumeInfo?.summery);
 
   return (
-    <p className="text-xs"> asdasd{resumeInfo?.summery}</p>
+    <p className="text-xs">{resumeInfo?.summery}</p>
   )
 }
 
