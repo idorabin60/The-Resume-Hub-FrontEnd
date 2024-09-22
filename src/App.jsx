@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { Navigate, Outlet } from 'react-router-dom'
 import { useUser } from '@clerk/clerk-react'
+import { Toaster } from "@/components/ui/toaster"
 import Header from './components/ui/custom/header'
 
 function App() {

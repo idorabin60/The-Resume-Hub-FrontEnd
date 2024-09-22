@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 function ResumeItemCard({ resume }) {
     console.log("im heree")
   return (
-    <Link to={'/dashboard/resume/'+resume.resumeid+"/edit"}>
+    <Link to={'/dashboard/resume/'+resume.documentId+"/edit"}>
     <div>
         <div className="bg-secondary p-6 flex flex-col justify-center items-center rounded-lg shadow-lg h-48 w-full hover:bg-secondary-light hover:shadow-2xl hover:scale-105 transition-transform duration-300">
             <Notebook />
