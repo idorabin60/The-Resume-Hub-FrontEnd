@@ -2,19 +2,19 @@
 import { Button } from "@/components/ui/button";
 import PersonalDetailForm from "./Forms/PersonalDetailForm";
 import { useState } from "react";
+import ProfessionalExpForm from "./Forms/ProfessionalExpForm";
+import SummeryForm from "./Forms/SummeryForm";
 
 function FormSection() {
-  // Move useState inside the component
-  const [activeIndex, setActiveIndex] = useState(2);
-  const [enableNavigationButtons,setEnableNavigationButtos] = useState(true);
-  console.log(activeIndex);
+  const [activeIndex, setActiveIndex] = useState(1);
+  const [enableNavigationButtons, setEnableNavigationButtons] = useState(true);
 
   const goToNextPage = () => {
-    setActiveIndex(activeIndex + 1);
+    setActiveIndex((prevIndex) => prevIndex + 1);
   };
 
   const goToThePrevPage = () => {
-    setActiveIndex(activeIndex - 1);
+    setActiveIndex((prevIndex) => prevIndex - 1);
   };
 
   return (
@@ -25,11 +25,10 @@ function FormSection() {
         </Button>
 
         <div className="flex space-x-2">
-          {/* Conditionally render Previous button only if activeIndex is greater than 1 */}
           {activeIndex > 1 && (
             <Button
-             disabled={!enableNavigationButtons}
-              onClick={goToThePrevPage} // Add onClick for Previous button
+              disabled={!enableNavigationButtons}
+              onClick={goToThePrevPage}
               className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
             >
               Previous Form
@@ -38,7 +37,7 @@ function FormSection() {
 
           <Button
             disabled={!enableNavigationButtons}
-            onClick={goToNextPage} // Add onClick for Next button
+            onClick={goToNextPage}
             className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
           >
             Next Form
@@ -48,19 +47,16 @@ function FormSection() {
 
       {activeIndex === 1 ? (
         <PersonalDetailForm
-          enableNavigationButtons={(v) => {
-            setEnableNavigationButtos(v); // Update state based on form logic
-          }}
+          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+        />
+      ) : activeIndex === 2 ? (
+        <SummeryForm
+          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
       ) : null}
-      {/* Personal Detail */}
-      {/* Summary */}
-      {/* Experience */}
-      {/* Educational Detail */}
-      {/* Skills */}
-      {/* Languages */}
     </div>
   );
 }
 
 export default FormSection;
+

@@ -18,7 +18,9 @@
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "express": "^4.21.0",
     "lucide-react": "^0.438.0",
+    "playwright": "^1.47.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-native-paper": "^5.12.5",
@@ -43,5 +45,18 @@
     "postcss": "^8.4.45",
     "tailwindcss": "^3.4.10",
     "vite": "^5.4.1"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idorabin60/ResuMelech.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/idorabin60/ResuMelech/issues"
+  },
+  "homepage": "https://github.com/idorabin60/ResuMelech#readme"
 }
