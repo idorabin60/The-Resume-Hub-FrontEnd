@@ -5,15 +5,12 @@ import ResumePreview from "../../componnents/ResumePreview";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 // import dummy from "@/data/dummy";
 import GlobalApi from "../../../../../service/GlobalApi";
-import dummy from "@/data/dummy";
 function EditResume() {
     const params = useParams();
     const [resumeInfo,setResumeInfo] = useState(null);
     useEffect(() => {
         if (params?.resumeId) {
           GlobalApi.getResumeById(params.resumeId).then((res) => {
-            console.log("LOOK HEREEEEEEEEE")
-            console.log(res.data.data)
             setResumeInfo(res.data.data);
           });
         }

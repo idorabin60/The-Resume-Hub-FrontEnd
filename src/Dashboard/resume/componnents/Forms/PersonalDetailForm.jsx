@@ -17,7 +17,7 @@ function PersonalDetailForm({ enableNavigationButtons }) {
   const { toast } = useToast()
   const params = useParams();
   const onSave = (e) => {
-    e.preventDefault(); // Prevent the form from submitting
+    e.preventDefault();
     setIsLoading(true);
     const data = formData;
     GlobalApi.updateResumePersonalDetail(params?.resumeId,data).then((res)=>{

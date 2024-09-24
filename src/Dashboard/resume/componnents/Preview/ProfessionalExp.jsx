@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 function ProfessionalExp({resumeInfo}) {
-    console.log(resumeInfo?.experience)
     if (!resumeInfo?.experience?.length) {
         return null; // Return null if no skills are present
       }
