@@ -53,10 +53,13 @@ function FormSection() {
         <SummeryForm
           enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
+      ) : activeIndex === 3 ? (
+        <ProfessionalExpForm
+          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+        />
       ) : null}
     </div>
   );
 }
 
 export default FormSection;
-

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useContext, useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { LoaderCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import GlobalApi from "../../../../../service/GlobalApi";
+import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
 
 function SummeryForm({ enableNavigationButtons }) {
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
@@ -15,6 +17,32 @@ function SummeryForm({ enableNavigationButtons }) {
   const [linkdinURL, setLinkdinURL] = useState(''); // State for LinkedIn URL input
   const params = useParams();
   const { toast } = useToast();
+
+  const GEMINAI_PROMPT = `generate a summmery for this job:${resumeInfo?.jobTitle}  for cv, make it 4-5 lines, only letters and only one option do your absolute best!`
+  const GenerateSummeryFromAI = async () =>{
+    setIsLoading(true)
+    try{
+    const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(GEMINAI_PROMPT);
+    console.log(GeminaiSummeryResult.response.text());
+    setSummery(GeminaiSummeryResult.response.text())
+
+    toast({
+      description: "Sumery has been generated usin ai suscseesfully.",
+    });
+    }
+    catch{
+      toast({
+        description: "Ai genrated has failed, please try agin or contect ido rabin: 052-7062800",
+      });
+      
+
+    }
+    finally{
+      setIsLoading(false)
+
+    }
+
+  }
 
   // Update resumeInfo with the latest summery when summery changes
   useEffect(() => {
@@ -101,7 +129,7 @@ function SummeryForm({ enableNavigationButtons }) {
             <Button
               size="sm"
               type="button"
-              onClick={handleGenerateSummary} // Call handleGenerateSummary on click
+              onClick={GenerateSummeryFromAI} // Call handleGenerateSummary on click
               className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
             >
               {isLoading ? <LoaderCircle className="animate-spin" /> : 'Generate summery that will match a specific job with AI'}

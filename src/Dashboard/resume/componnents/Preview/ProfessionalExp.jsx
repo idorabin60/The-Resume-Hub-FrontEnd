@@ -10,7 +10,7 @@ function ProfessionalExp({resumeInfo}) {
         {resumeInfo?.experience.map((exp,index)=>{
           return  (<div key={index}>
                 <h2 className="text-sm font-bold my-3">{exp?.title}</h2>
-                <h2 className="text-xs flex justify-between">{exp?.companyName},{exp?.city}.
+                <h2 className="text-xs flex justify-between">{exp?.companyName} {exp?.city}
                 {exp?.state}
                 <span className="my-1">{exp?.startDate} - {exp?.currentlyWorking?"present":exp.endDate}</span></h2>
                 <p>{exp.workSummery}</p>
