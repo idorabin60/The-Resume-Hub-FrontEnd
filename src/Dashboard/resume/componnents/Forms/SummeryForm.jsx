@@ -58,6 +58,7 @@ function SummeryForm({ enableNavigationButtons }) {
     const data = {
       summery: summery,
     };
+    console.log(data)
     
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
       .then((res) => {
@@ -166,4 +167,3 @@ function SummeryForm({ enableNavigationButtons }) {
 }
 
 export default SummeryForm;
-

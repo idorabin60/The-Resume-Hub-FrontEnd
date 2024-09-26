@@ -19,6 +19,11 @@ function PersonalDetail({resumeInfo}) {
       <h3 className="text-sm font-normal">{resumeInfo?.address}</h3>
       <h3 className="text-sm font-normal">Phone number: {resumeInfo?.phone}</h3>
       <h3 className="text-sm font-normal">Email: {resumeInfo?.email}</h3>
+      <h3 className="text-sm font-normal">
+  LinkedIn: <a href={resumeInfo?.linkdin} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+    {resumeInfo?.linkdin}
+  </a>
+</h3>
     </div>
     <hr className="border-[2px] my-2"/>
   </div>

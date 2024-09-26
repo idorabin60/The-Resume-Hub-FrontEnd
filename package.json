@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
+    "draft-js": "^0.11.7",
     "express": "^4.21.0",
     "lucide-react": "^0.438.0",
     "playwright": "^1.47.2",

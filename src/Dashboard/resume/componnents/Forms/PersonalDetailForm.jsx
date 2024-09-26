@@ -116,6 +116,16 @@ function PersonalDetailForm({ enableNavigationButtons }) {
             className="p-3 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
           />
         </div>
+        <div className="flex flex-col w-full">
+          <label className="text-gray-800 font-semibold tracking-wide mb-2">Linkdin:</label>
+          <Input
+          value= {resumeInfo?.linkdin || ''}
+            required
+            name="linkdin"
+            onChange={handleInputOnChange}
+            className="p-3 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
+          />
+        </div>
 
         {/* Address */}
         <div className="flex flex-col w-full">
