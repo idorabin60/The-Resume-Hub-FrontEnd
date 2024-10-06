@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 import dummy from "@/data/dummy";
-import { StarIcon } from '@heroicons/react/solid';
+import SkillComponnent from "../Forms/SkillComponnent";
 
 const theme = dummy.themeColor;
 
@@ -71,16 +71,25 @@ function Skils({ resumeInfo }) {
   }
 
   return (
+    // <div className="text-center">
+    //   <h2 className="text-xl font-semibold text-gray-600 mb-4">Skills</h2>
+    //   <div className="space-y-4">
+    //     {resumeInfo.Skills.map((skill, index) => (
+    //       <SkillContainer key={index}>
+    //         <SkillName>{skill.name}</SkillName>
+    //         <ProgressWithLabel value={skill.rating} />
+    //       </SkillContainer>
+    //     ))}
+    //   </div>
+    // </div>
+    // <SkillComponnent />
     <div className="text-center">
-      <h2 className="text-xl font-semibold text-gray-600 mb-4">Skills</h2>
-      <div className="space-y-4">
-        {resumeInfo.Skills.map((skill, index) => (
-          <SkillContainer key={index}>
-            <SkillName>{skill.name}</SkillName>
-            <ProgressWithLabel value={skill.rating} />
-          </SkillContainer>
-        ))}
-      </div>
+       <h2 className="text-xl font-semibold text-gray-600 mb-4">Skills</h2>
+       <div className="space-y-4">
+        {resumeInfo.Skills.map((skill,index)=>{
+          <SkillComponnent key={index} name={skill.name} value={skill.rating} />
+        })}
+        </div>
     </div>
   );
 }
