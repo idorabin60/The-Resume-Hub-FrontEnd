@@ -15,7 +15,7 @@ const getUserResumes = (userEmail) =>
     userEmail,
   });
 const getResumeById = (resumeId) =>
-  axiosClient.get(`/user-resumes/${resumeId}?populate=Experience`);
+  axiosClient.get(`/user-resumes/${resumeId}?populate=*`);
 
 const updateResumePersonalDetail = (id, data) =>
   axiosClient.put(`/user-resumes/${id}`, { data });
