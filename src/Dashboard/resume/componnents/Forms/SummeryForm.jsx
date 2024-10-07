@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
+import { ResumeInfoParserForPrompt } from "../../../../../service/ResumeInfoParserForPrompt";
 
 function SummeryForm({ enableNavigationButtons }) {
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
@@ -18,11 +19,12 @@ function SummeryForm({ enableNavigationButtons }) {
   const params = useParams();
   const { toast } = useToast();
 
-  const GEMINAI_PROMPT = `generate a summmery for this job:${resumeInfo?.jobTitle}  for cv, make it 4-5 lines, only letters and only one option do your absolute best!`
   const GenerateSummeryFromAI = async () =>{
     setIsLoading(true)
     try{
-    const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(GEMINAI_PROMPT);
+    const data_for_parsing = ResumeInfoParserForPrompt(resumeInfo);
+    console.log(data_for_parsing)
+    const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(ResumeInfoParserForPrompt(resumeInfo));
     console.log(GeminaiSummeryResult.response.text());
     setSummery(GeminaiSummeryResult.response.text())
 
@@ -66,6 +68,9 @@ function SummeryForm({ enableNavigationButtons }) {
         toast({
           description: "Your Personal Details have been saved.",
         });
+        const promptData = ResumeInfoParserForPrompt(resumeInfo);
+        console.log(resumeInfo)
+        console.log(promptData);
       })
       .catch((err) => {
         console.error(
