@@ -62,7 +62,7 @@ function SkillsForm() {
     
         // Sanitize experience list by providing default values for missing fields
         const sanitizedExperienceList = skillList.map((skill) => ({
-          name: skill.title || "Unknown Title",
+          name: skill.name || "Unknown Title",
           rating: skill.rating || "Unknown rating",
          
         }));
