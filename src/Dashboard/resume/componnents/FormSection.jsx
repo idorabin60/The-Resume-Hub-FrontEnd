@@ -5,6 +5,7 @@ import { useState } from "react";
 import ProfessionalExpForm from "./Forms/ProfessionalExpForm";
 import SummeryForm from "./Forms/SummeryForm";
 import SkillsForm from "./Forms/SkillsForm";
+import LanguagesForm from "./Forms/LanguagesForm";
 
 function FormSection() {
   const [activeIndex, setActiveIndex] = useState(1);
@@ -47,22 +48,25 @@ function FormSection() {
       </div>
 
       {activeIndex === 1 ? (
-        <PersonalDetailForm
-          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
-        />
-      ) : activeIndex === 2 ? (
-        <SummeryForm
-          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
-        />
-      ) : activeIndex === 3 ? (
-        <ProfessionalExpForm
-          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
-        />
-      ) : activeIndex === 4 ? (
-        <SkillsForm
-          enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
-        />
-      ) : null}
+  <PersonalDetailForm
+    enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+  />
+) : activeIndex === 5 ? (
+  <SummeryForm
+    enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+  />
+) : activeIndex === 3 ? (
+  <ProfessionalExpForm
+    enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+  />
+) : activeIndex === 4 ? (
+  <SkillsForm
+    enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
+  />
+) : activeIndex === 2 ? (
+  <LanguagesForm enableNavigationButtons={(v) => setEnableNavigationButtons(v)} />
+) : null}
+
     </div>
   );
 }

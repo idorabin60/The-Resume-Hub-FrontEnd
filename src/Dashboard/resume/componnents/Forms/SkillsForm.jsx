@@ -63,7 +63,6 @@ function SkillsForm() {
         // Sanitize experience list by providing default values for missing fields
         const sanitizedExperienceList = skillList.map((skill) => ({
           name: skill.name || "Unknown Title",
-          rating: skill.rating || "Unknown rating",
          
         }));
     
@@ -115,18 +114,6 @@ function SkillsForm() {
                         placeholder="enter skill name"
                         onChange={(event) => handleChange(index, event)}
                         value={skill.title}
-                        className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                      />
-                    </div>
-                    <div className="p-5 mt-10">
-                      <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                        Skill rating
-                      </label>
-                      <Input
-                        name="rating"
-                        placeholder="plaease enter rating"
-                        onChange={(event) => handleChange(index, event)}
-                        value={skill.rating}
                         className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
                       />
                     </div>
