@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Input } from "@/components/ui/input";
-import { useContext } from "react";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { useToast } from "@/hooks/use-toast";
-import "draft-js/dist/Draft.css";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+
 function EducationalForm() {
   const [educationList, setEducationList] = useState([]);
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
@@ -29,26 +28,20 @@ function EducationalForm() {
       },
     ]);
   };
+
   useEffect(() => {
-    console.log(resumeInfo);
-    console.log(resumeInfo.Experience);
     if (resumeInfo?.Educations && resumeInfo.Educations.length > 0) {
-      //HI CHAT GPT THIS LIKE WONT RUN I DONT SEE IT RUN EVEN THOUGH IT HAS AN EXPERICNR
-      console.log(resumeInfo.Educations);
       setEducationList(resumeInfo.Educations);
     }
-  }, []);
+  }, [resumeInfo]);
 
   const RemoveEducation = () => {
     setEducationList((prevEducationList) => {
       const updatedList = prevEducationList.slice(0, -1);
-
-      // Update the resumeInfo context after removing an experience
       setResumeInfo((prevState) => ({
         ...prevState,
         Educations: updatedList,
       }));
-
       return updatedList;
     });
   };
@@ -62,38 +55,24 @@ function EducationalForm() {
       ...prevState,
       Educations: newEntries,
     }));
-
-    // const handleRichTextEditor = (e, name, index) => {
-    //   const newEntries = experinceList.slice();
-    //   newEntries[index][name] = e.target.value;
-
-    //   setExperinceList(newEntries);
-    // };
   };
+
   const onSave = () => {
     setIsLoading(true);
-
-    // Sanitize experience list by providing default values for missing fields
-    const sanitizedExperienceList = educationList.map((education) => ({
-      institute: education.institute || "Unknown Title",
-      degree: education.degree || "Unknown Company",
-      startDate: education.startDate || "2000-01-01", // Assuming date format is required
+    const sanitizedEducationList = educationList.map((education) => ({
+      institute: education.institute || "Unknown Institute",
+      degree: education.degree || "Unknown Degree",
+      startDate: education.startDate || "2000-01-01",
       endDate: education.endDate || "2000-01-01",
       summery: education.summery || "No summary provided",
     }));
 
-    // Create the data payload with the sanitized experience list
-    const data = { Educations: sanitizedExperienceList };
+    const data = { Educations: sanitizedEducationList };
 
-    // Log data to verify what is being sent
-
-    // Make the API call to update the resume with the sanitized data
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
       .then((res) => {
         setIsLoading(false);
-        toast({
-          description: "Your Education Details have been saved.",
-        });
+        toast({ description: "Your Education Details have been saved." });
         setResumeInfo((prevState) => ({
           ...prevState,
           Educations: data.Educations,
@@ -101,129 +80,81 @@ function EducationalForm() {
       })
       .catch((error) => {
         setIsLoading(false);
-        console.error(
-          "Error saving Experience:",
-          error?.response?.data || error
-        );
-        toast({
-          description: "Failed to save Education. Please try again.",
-        });
+        toast({ description: "Failed to save Education. Please try again." });
       });
   };
 
   return (
-    <div className="p-5 shadow-md">
-      <h2 className="p-5 shadow-md rounded-lg border-t-2 border-t-gray-300 mt-6 bg-gradient-to-r from-white to-blue-100 text-gray-800 text-xl font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg">
-        Educations
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="border-b">
+        <h2 className="text-2xl font-bold">Educations</h2>
         <p className="text-xs">Fill in your Education</p>
-      </h2>
-      <div>
-        {educationList.map((educationField, index) => {
-          return (
-            <div key={index}>
-              <div className="grid grid-cols-2">
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                  institute
-                  </label>
-                  <Input
-                    name="institute"
-                    placeholder="enter institute"
-                    onChange={(event) => handleChange(index, event)}
-                    value={educationField.institute}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    degree     
-                  </label>
-                  <Input
-                    name="degree"
-                    placeholder="enter degree"
-                    onChange={(event) => handleChange(index, event)}
-                    value={educationField.degree}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Start date
-                  </label>
-                  <Input
-                    type="date"
-                    name="startDate"
-                    placeholder="enter Work Title"
-                    onChange={(event) => handleChange(index, event)}
-                    value={educationField.startDate}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                {/* <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Currently working
-                  </label>
-                  <Input
-                    name="currentlyWorking"
-                    placeholder="enter Work Title"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.currentlyWorking}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div> */}
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    End date
-                  </label>
-                  <Input
-                    type="date"
-                    name="endDate"
-                    placeholder="End date"
-                    onChange={(event) => handleChange(index, event)}
-                    value={educationField.endDate}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2 width-full">
-                    <summary></summary>
-                  </label>
-                  <Input
-                    name="summery"
-                    placeholder="enter Summery"
-                    onChange={(event) => handleChange(index, event)}
-                    value={educationField.summery}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
+      </CardHeader>
+      <CardContent>
+        {educationList.map((educationField, index) => (
+          <Card className="mb-6" key={index}>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-gray-800 font-semibold">Institute</label>
+                <Input
+                  name="institute"
+                  placeholder="Enter Institute"
+                  value={educationField.institute}
+                  onChange={(event) => handleChange(index, event)}
+                />
               </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="flex justify-between mt-6">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={AddNewEducation}
-        >
-          Add new Education
-        </Button>
-        <Button
-          onClick={onSave}
-          type="submit"
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-        >
-          {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
-        </Button>
-      </div>
-      <div className="mt-4">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={RemoveEducation}
-        >Delete job Education</Button>
-      </div>
-    </div>
+              <div className="space-y-2">
+                <label className="text-gray-800 font-semibold">Degree</label>
+                <Input
+                  name="degree"
+                  placeholder="Enter Degree"
+                  value={educationField.degree}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-gray-800 font-semibold">Start Date</label>
+                <Input
+                  type="date"
+                  name="startDate"
+                  value={educationField.startDate}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-gray-800 font-semibold">End Date</label>
+                <Input
+                  type="date"
+                  name="endDate"
+                  value={educationField.endDate}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-gray-800 font-semibold">Summary</label>
+                <Input
+                  name="summery"
+                  placeholder="Enter Summary"
+                  value={educationField.summery}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+          <Button variant="outline" className="w-full sm:w-auto" onClick={AddNewEducation}>
+            Add New Education
+          </Button>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={RemoveEducation}>
+            Delete Last Education
+          </Button>
+          <Button className="w-full sm:w-auto" onClick={onSave}>
+            {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

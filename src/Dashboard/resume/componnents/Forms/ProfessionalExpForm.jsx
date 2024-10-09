@@ -1,25 +1,31 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
-import { useContext } from "react";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
+
 function ProfessionalExpForm() {
   const [experinceList, setExperinceList] = useState([]);
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const { toast } = useToast();
-  const formatWorkSummeryPromptTemplate = "Please correct any grammar mistakes in this text and format it according to standard CV work summary guidelines. Only return the formatted text without any additional explanations or comments."
+
+  const formatWorkSummeryPromptTemplate = "Please correct any grammar mistakes in this text and format it according to standard CV work summary guidelines. Only return the formatted text without any additional explanations or comments.";
+
+  useEffect(() => {
+    if (resumeInfo?.Experience && resumeInfo.Experience.length > 0) {
+      setExperinceList(resumeInfo.Experience);
+    }
+  }, [resumeInfo]);
 
   const AddNewExperience = () => {
     setExperinceList([
@@ -34,33 +40,21 @@ function ProfessionalExpForm() {
       },
     ]);
   };
-  useEffect(() => {
-    console.log(resumeInfo);
-    console.log(resumeInfo.Experience);
-    if (resumeInfo?.Experience && resumeInfo.Experience.length > 0) {
-      //HI CHAT GPT THIS LIKE WONT RUN I DONT SEE IT RUN EVEN THOUGH IT HAS AN EXPERICNR
-      console.log(resumeInfo.Experience);
-      setExperinceList(resumeInfo.Experience);
-    }
-  }, []);
 
   const RemoveExperience = () => {
     setExperinceList((prevExperinceList) => {
       const updatedList = prevExperinceList.slice(0, -1);
-
-      // Update the resumeInfo context after removing an experience
       setResumeInfo((prevState) => ({
         ...prevState,
         Experience: updatedList,
       }));
-
       return updatedList;
     });
   };
 
   const handleChange = (index, event) => {
-    const newEntries = experinceList.slice();
     const { name, value } = event.target;
+    const newEntries = experinceList.slice();
     newEntries[index][name] = value;
     setExperinceList(newEntries);
     setResumeInfo((prevState) => ({
@@ -68,62 +62,44 @@ function ProfessionalExpForm() {
       Experience: newEntries,
     }));
   };
+
   const formatJobSummeryWithAi = async (index) => {
-    setIsLoading(true)
-    try{
+    setIsLoading(true);
+    try {
       const currnetJobSummery = experinceList[index].workSummery;
-      console.log(currnetJobSummery);
-      const finalPromptForAI =
-        formatWorkSummeryPromptTemplate + " "+ currnetJobSummery;
-      console.log(finalPromptForAI)
-      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(finalPromptForAI)
-      console.log(GeminaiSummeryResult.response.text());
+      const finalPromptForAI = formatWorkSummeryPromptTemplate + " " + currnetJobSummery;
+      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(finalPromptForAI);
       const newEntries = experinceList.slice();
-      newEntries[index].workSummery = GeminaiSummeryResult.response.text()
+      newEntries[index].workSummery = await GeminaiSummeryResult.response.text();
       setExperinceList(newEntries);
       setResumeInfo((prevState) => ({
         ...prevState,
         Experience: newEntries,
       }));
-
-      toast({
-        description: "Formated work Exp with ai.",
-      });
-
-    }catch{
-      toast({
-        description: "Somthing went wrong",
-      });
+      toast({ description: "Formatted work experience with AI." });
+    } catch {
+      toast({ description: "Something went wrong." });
+    } finally {
+      setIsLoading(false);
     }
-
   };
-
 
   const onSave = () => {
     setIsLoading(true);
-
-    // Sanitize experience list by providing default values for missing fields
     const sanitizedExperienceList = experinceList.map((experience) => ({
       title: experience.title || "Unknown Title",
       companyName: experience.companyName || "Unknown Company",
       city: experience.city || "Unknown City",
-      startDate: experience.startDate || "2000-01-01", // Assuming date format is required
+      startDate: experience.startDate || "2000-01-01",
       endDate: experience.endDate || "2000-01-01",
       workSummery: experience.workSummery || "No summary provided",
     }));
-
-    // Create the data payload with the sanitized experience list
     const data = { Experience: sanitizedExperienceList };
 
-    // Log data to verify what is being sent
-
-    // Make the API call to update the resume with the sanitized data
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
       .then((res) => {
         setIsLoading(false);
-        toast({
-          description: "Your Exp Details have been saved.",
-        });
+        toast({ description: "Your experience details have been saved." });
         setResumeInfo((prevState) => ({
           ...prevState,
           Experience: data.Experience,
@@ -131,150 +107,109 @@ function ProfessionalExpForm() {
       })
       .catch((error) => {
         setIsLoading(false);
-        console.error(
-          "Error saving Experience:",
-          error?.response?.data || error
-        );
-        toast({
-          description: "Failed to save Experience. Please try again.",
-        });
+        toast({ description: "Failed to save experience. Please try again." });
       });
   };
 
   return (
-    <div className="p-5 shadow-md">
-      <h2 className="p-5 shadow-md rounded-lg border-t-2 border-t-gray-300 mt-6 bg-gradient-to-r from-white to-blue-100 text-gray-800 text-xl font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg">
-        Personal Detail
-        <p className="text-xs">Fill in your Pro Exp</p>
-      </h2>
-      <div>
-        {experinceList.map((expField, index) => {
-          return (
-            <div key={index}>
-              <div className="grid grid-cols-2">
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Work Title
-                  </label>
-                  <Input
-                    name="title"
-                    placeholder="enter Work Title"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.title}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Company name
-                  </label>
-                  <Input
-                    name="companyName"
-                    placeholder="enter Company name"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.companyName}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    City
-                  </label>
-                  <Input
-                    name="city"
-                    placeholder="enter city"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.city}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Start date
-                  </label>
-                  <Input
-                    type="date"
-                    name="startDate"
-                    placeholder="enter Work Title"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.startDate}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Currently working
-                  </label>
-                  <Input
-                    name="currentlyWorking"
-                    placeholder="enter Work Title"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.currentlyWorking}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10">
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    End date
-                  </label>
-                  <Input
-                    type="date"
-                    name="endDate"
-                    placeholder="End date"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.endDate}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                </div>
-                <div className="p-5 mt-10 col-span-2">
-                  {" "}
-                  {/* Make this full span across 2 columns */}
-                  <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                    Work Summary
-                  </label>
-                  <Textarea
-                    wrap="soft"
-                    name="workSummery"
-                    placeholder="Enter Work Summary"
-                    onChange={(event) => handleChange(index, event)}
-                    value={expField.workSummery}
-                    className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
-                  />
-                  <div className="flex justify-end mt-5">
-                    <Button onClick={() => formatJobSummeryWithAi(index)}>
-                      Format summary with AI
-                    </Button>
-                  </div>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="border-b">
+        <h2 className="text-2xl font-bold">Professional Experience</h2>
+      </CardHeader>
+      <CardContent>
+        {experinceList.map((expField, index) => (
+          <Card className="mb-6" key={index}>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Work Title</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="Enter Work Title"
+                  value={expField.title}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  name="companyName"
+                  placeholder="Enter Company Name"
+                  value={expField.companyName}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  name="city"
+                  placeholder="Enter City"
+                  value={expField.city}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  name="startDate"
+                  value={expField.startDate}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date</Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  name="endDate"
+                  value={expField.endDate}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="workSummary">Work Summary</Label>
+                <Textarea
+                  id="workSummary"
+                  name="workSummery"
+                  placeholder="Enter Work Summary"
+                  rows={4}
+                  value={expField.workSummery}
+                  onChange={(event) => handleChange(index, event)}
+                />
+                <div className="flex justify-end mt-2">
+                  <Button variant="outline" size="sm" onClick={() => formatJobSummeryWithAi(index)}>
+                    {isLoading ? <LoaderCircle className="animate-spin" /> : "Format with AI"}
+                  </Button>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="flex justify-between mt-6">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={AddNewExperience}
-        >
-          Add new job experience
-        </Button>
-        <Button
-          onClick={onSave}
-          type="submit"
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-        >
-          {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
-        </Button>
-      </div>
-      <div className="mt-4">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={RemoveExperience}
-        >
-          Delete job Experiense
-        </Button>
-      </div>
-    </div>
+            </CardContent>
+          </Card>
+        ))}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={AddNewExperience}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add New Experience
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={RemoveExperience}
+          >
+            <Trash2 className="mr-2 h-4 w-4" /> Remove Last Experience
+          </Button>
+          <Button className="w-full sm:w-auto" onClick={onSave}>
+            {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
