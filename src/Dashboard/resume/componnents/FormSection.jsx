@@ -19,34 +19,39 @@ function FormSection() {
   const goToThePrevPage = () => {
     setActiveIndex((prevIndex) => prevIndex - 1);
   };
+  
 
   return (
     <div>
       <div className="flex justify-between">
-        <Button className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg">
+        <Button variant="outline" className="w-full sm:w-auto" >
           Theme
         </Button>
 
         <div className="flex space-x-2">
           {activeIndex > 1 && (
             <Button
+              variant="outline"
               disabled={!enableNavigationButtons}
               onClick={goToThePrevPage}
-              className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
+              className="w-full sm:w-auto"
             >
               Previous Form
             </Button>
           )}
 
+          {activeIndex<6 && (
           <Button
+            variant="outline"
             disabled={!enableNavigationButtons}
             onClick={goToNextPage}
-            className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          >
+            className="w-full sm:w-auto"          >
             Next Form
           </Button>
+          )}
         </div>
       </div>
+          
 
       {activeIndex === 1 ? (
         <PersonalDetailForm

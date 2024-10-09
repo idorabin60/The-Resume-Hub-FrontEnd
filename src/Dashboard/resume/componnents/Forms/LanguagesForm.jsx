@@ -1,12 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 function LanguagesForm() {
   const [languagesList, setLanguagesLists] = useState([]);
@@ -25,11 +25,10 @@ function LanguagesForm() {
   };
 
   useEffect(() => {
-    // Ensure resumeInfo is available before trying to access Languages
     if (resumeInfo?.Languages && resumeInfo.Languages.length > 0) {
       setLanguagesLists(resumeInfo.Languages);
     }
-  }, [resumeInfo]); // Add resumeInfo to dependency array to trigger when it's updated
+  }, [resumeInfo]);
 
   const removeLanguage = () => {
     setLanguagesLists((prevLanguagesList) => {
@@ -43,8 +42,7 @@ function LanguagesForm() {
   };
 
   const handleChange = (index, event) => {
-    console.log("bla")
-    const newEntries = [...languagesList]; // Make a shallow copy of the state
+    const newEntries = [...languagesList];
     const { name, value } = event.target;
     newEntries[index][name] = value;
     setLanguagesLists(newEntries);
@@ -84,55 +82,40 @@ function LanguagesForm() {
   };
 
   return (
-    <div className="p-5 shadow-md">
-      <h2 className="p-5 shadow-md rounded-lg border-t-2 border-t-gray-300 mt-6 bg-gradient-to-r from-white to-blue-100 text-gray-800 text-xl font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg">
-        Languages
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="border-b">
+        <h2 className="text-2xl font-bold">Languages</h2>
         <p className="text-xs">Fill in your Languages</p>
-      </h2>
-      <div>
+      </CardHeader>
+      <CardContent>
         {languagesList.map((language, index) => (
-          <div key={index}>
-            <div className="grid grid-cols-2">
-              <div className="p-5 mt-10">
-                <label className="text-gray-800 font-semibold tracking-wide mb-2">
-                  Language title name
-                </label>
+          <Card className="mb-6" key={index}>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-gray-800 font-semibold">Language Title</label>
                 <Input
                   name="title"
-                  placeholder="enter language title"
-                  onChange={(event) => handleChange(index, event)}
+                  placeholder="Enter Language Title"
                   value={language.title}
-                  className="p-3 mt-5 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full"
+                  onChange={(event) => handleChange(index, event)}
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
-      </div>
-      <div className="flex justify-between mt-6">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={AddNewLanguage}
-        >
-          Add new Language
-        </Button>
-        <Button
-          onClick={onSave}
-          type="submit"
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-        >
-          {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
-        </Button>
-      </div>
-      <div className="mt-4">
-        <Button
-          className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-          onClick={removeLanguage}
-        >
-          Delete Language
-        </Button>
-      </div>
-    </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+          <Button variant="outline" className="w-full sm:w-auto" onClick={AddNewLanguage}>
+            Add New Language
+          </Button>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={removeLanguage}>
+            Delete Last Language
+          </Button>
+          <Button className="w-full sm:w-auto" onClick={onSave}>
+            {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

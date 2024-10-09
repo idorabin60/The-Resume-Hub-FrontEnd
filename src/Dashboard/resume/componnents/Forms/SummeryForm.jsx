@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useContext, useEffect, useState } from "react";
@@ -10,73 +9,53 @@ import { useToast } from "@/hooks/use-toast";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
 import { ResumeInfoParserForPrompt } from "../../../../../service/ResumeInfoParserForPrompt";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 function SummeryForm({ enableNavigationButtons }) {
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
   const [summery, setSummery] = useState(resumeInfo?.summery || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [linkdinURL, setLinkdinURL] = useState(''); // State for LinkedIn URL input
+  const [linkdinURL, setLinkdinURL] = useState('');
   const params = useParams();
   const { toast } = useToast();
 
-  const GenerateSummeryFromAI = async () =>{
-    setIsLoading(true)
-    try{
-    const data_for_parsing = ResumeInfoParserForPrompt(resumeInfo);
-    console.log(data_for_parsing)
-    const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(ResumeInfoParserForPrompt(resumeInfo));
-    console.log(GeminaiSummeryResult.response.text());
-    setSummery(GeminaiSummeryResult.response.text())
-
-    toast({
-      description: "Sumery has been generated usin ai suscseesfully.",
-    });
-    }
-    catch{
+  const GenerateSummeryFromAI = async () => {
+    setIsLoading(true);
+    try {
+      const data_for_parsing = ResumeInfoParserForPrompt(resumeInfo);
+      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(data_for_parsing);
+      setSummery(GeminaiSummeryResult.response.text());
       toast({
-        description: "Ai genrated has failed, please try agin or contect ido rabin: 052-7062800",
+        description: "Summary has been generated successfully using AI.",
       });
-      
-
+    } catch {
+      toast({
+        description: "AI generation failed. Please try again or contact Ido Rabin at 052-7062800.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    finally{
-      setIsLoading(false)
+  };
 
-    }
-
-  }
-
-  // Update resumeInfo with the latest summery when summery changes
   useEffect(() => {
     setResumeInfo((prevResumeInfo) => ({
       ...prevResumeInfo,
-      summery: summery,
+      summery,
     }));
   }, [summery, setResumeInfo]);
 
   const onSave = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const data = {
-      summery: summery,
-    };
-    console.log(data)
-    
+    const data = { summery };
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         toast({
-          description: "Your Personal Details have been saved.",
+          description: "Your summary has been saved.",
         });
-        const promptData = ResumeInfoParserForPrompt(resumeInfo);
-        console.log(resumeInfo)
-        console.log(promptData);
       })
       .catch((err) => {
-        console.error(
-          "Error during PUT request:",
-          err.response ? err.response.data : err.message
-        );
+        console.error("Error during PUT request:", err.response ? err.response.data : err.message);
       })
       .finally(() => {
         setIsLoading(false);
@@ -86,88 +65,76 @@ function SummeryForm({ enableNavigationButtons }) {
 
   const handleGenerateSummary = async () => {
     if (!linkdinURL) {
-      toast({
-        description: "Please enter a LinkedIn job URL",
-      });
+      toast({ description: "Please enter a LinkedIn job URL" });
       return;
     }
-
     setIsLoading(true);
     try {
-      // Call the backend to extract job details
       const response = await fetch('http://localhost:3001/extract-job-details', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ jobURL: linkdinURL }), // Send LinkedIn URL to the backend
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobURL: linkdinURL }),
       });
-      
       const data = await response.json();
-
       if (data.aboutJobText) {
-        setSummery(data.aboutJobText); // Update summery with the extracted job details
-        toast({
-          description: "Job details extracted successfully!",
-        });
+        setSummery(data.aboutJobText);
+        toast({ description: "Job details extracted successfully!" });
       } else {
-        toast({
-          description: "Failed to extract job details",
-        });
+        toast({ description: "Failed to extract job details" });
       }
     } catch (error) {
       console.error("Error extracting job details:", error);
-      toast({
-        description: "Failed to extract job details",
-      });
+      toast({ description: "Failed to extract job details" });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="p-5 shadow-md">
-      <h2 className="p-5 shadow-md rounded-lg border-t-2 border-t-gray-300 mt-6 bg-gradient-to-r from-white to-blue-100 text-gray-800 text-xl font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg">
-        Summery
-        <form onSubmit={onSave} className="mt-4">
-          <div className="flex justify-between items-end">
-            <label className="text-xs mt-4">Add Summery:</label>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="border-b">
+        <h2 className="text-2xl font-bold">Summary</h2>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={onSave} className="space-y-5">
+          <div className="flex justify-between items-center">
+            <label className="text-gray-800 font-semibold">Add Summary:</label>
             <Button
               size="sm"
               type="button"
-              onClick={GenerateSummeryFromAI} // Call handleGenerateSummary on click
-              className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
+              onClick={GenerateSummeryFromAI}
+              className="w-full sm:w-auto"
             >
-              {isLoading ? <LoaderCircle className="animate-spin" /> : 'Generate summery that will match a specific job with AI'}
+              {isLoading ? <LoaderCircle className="animate-spin" /> : 'Generate summary with AI'}
             </Button>
           </div>
+
           <Textarea
             value={summery}
             required
-            className="mt-10"
             onChange={(e) => setSummery(e.target.value)}
+            className="w-full"
           />
-          <div className="mt-5">
-            <label>Enter URL from a LinkedIn job you want your CV to match for</label>
+
+          <div className="space-y-2">
+            <label className="text-gray-800 font-semibold">Enter URL from a LinkedIn job you want your CV to match</label>
             <Input
               name="linkdinURL"
               placeholder="https://www.linkedin.com/job/sample"
-              value={linkdinURL} // Bind input value to state
-              onChange={(e) => setLinkdinURL(e.target.value)} // Update LinkedIn URL state
-              className="p-3 shadow-md rounded-lg bg-gradient-to-r from-white to-blue-100 text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-blue-100 hover:to-white hover:shadow-lg w-full mt-5"
+              value={linkdinURL}
+              onChange={(e) => setLinkdinURL(e.target.value)}
+              className="w-full"
             />
           </div>
+
           <div className="flex justify-end mt-6">
-            <Button
-              type="submit"
-              className="p-3 shadow-md rounded-lg bg-gradient-to-r from-blue-100 to-white text-gray-800 font-semibold tracking-wide transition duration-500 ease-in-out transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-blue-100 hover:shadow-lg"
-            >
+            <Button type="submit" className="w-full sm:w-auto">
               {isLoading ? <LoaderCircle className="animate-spin" /> : 'Save'}
             </Button>
           </div>
         </form>
-      </h2>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
