@@ -32,7 +32,7 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
   ).join("\n");
 
   const promptForAI = `
-  I would like you to create a professional and impactful 8-10 line summary for my CV. Please focus on highlighting my key strengths, emphasizing my experience, skills, and education, while also showcasing my personal qualities and work ethic. Write the summary in a confident and polished tone, as though I am writing it myself. Here is my relevant information:
+  I would like you to create a professional and impactful 4-6 line summary for my CV. Please focus on highlighting my key strengths, emphasizing my experience, skills, and education, while also showcasing my personal qualities and work ethic. Write the summary in a confident and polished tone, as though I am writing it myself. Here is my relevant information:
 
   Name: ${firstName} ${lastName}
   Job Title: ${jobTitle}
