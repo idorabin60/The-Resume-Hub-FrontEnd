@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
 // card.jsx
-
+function cn(...classes) {
+    return classes.filter(Boolean).join(' ')
+  }
+  
 export function Card({ children, className }) {
     return (
       <div className={`bg-white shadow-md rounded-lg ${className}`}>
@@ -32,4 +35,19 @@ export function Card({ children, className }) {
       </div>
     );
   }
+  export function CardTitle({ children, className, ...props }) {
+    return (
+      <h3
+        className={cn(
+          "text-lg font-semibold leading-none tracking-tight",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </h3>
+    )
+  }
+  
+  CardTitle.displayName = "CardTitle"
   

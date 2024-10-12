@@ -24,6 +24,7 @@ function PersonalDetailForm({ enableNavigationButtons }) {
       email: resumeInfo?.email || '',
       linkdin: resumeInfo?.linkdin || '',
       address: resumeInfo?.address || '',
+      company: resumeInfo?.company || '',
     });
   }, [resumeInfo]);
 
@@ -138,7 +139,6 @@ function PersonalDetailForm({ enableNavigationButtons }) {
               name="linkdin"
               value={formData.linkdin}
               onChange={handleInputOnChange}
-              required
               className="w-full"
             />
           </div>
@@ -149,6 +149,16 @@ function PersonalDetailForm({ enableNavigationButtons }) {
             <Input
               name="address"
               value={formData.address}
+              onChange={handleInputOnChange}
+              required
+              className="w-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-gray-800 font-semibold">Company</label>
+            <Input
+              name="company"
+              value={formData.company}
               onChange={handleInputOnChange}
               required
               className="w-full"
