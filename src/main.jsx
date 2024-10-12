@@ -10,6 +10,7 @@ import Dashboard from './Dashboard/index.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { Toaster } from "@/components/ui/toaster"
 import EditResume from './Dashboard/resume/[resumeid]/edit/index.jsx'
+import DownloadView from './Download/[resumeId]/DownloadView.jsx'
 
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path:'/dashboard/resume/:resumeId/edit',
         element: <EditResume />
+      },
+      {
+        path:'/Download/:resumeId/DownloadView',
+        element: <DownloadView />
       }
     ]
   }

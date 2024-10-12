@@ -7,7 +7,7 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
     phone,
     email,
     Experience = [], // Matching the case of the field in the data
-    education = [], // If education is not present, it will default to an empty array
+    Educations = [], // If education is not present, it will default to an empty array
     Skills = [], // Matching the case of the field in the data
   } = resumeInfo;
 
@@ -20,12 +20,10 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
       }`
   ).join("\n");
 
-  const educationSummary = education
-    .map(
-      (edu) =>
-        `• ${edu.degree} in ${edu.major} from ${edu.universityName} (${edu.startDate} to ${edu.endDate})`
-    )
-    .join("\n");
+  const educationSummary = Educations.map(
+    (edu) =>
+      `• ${edu.degree} in ${edu.major} from ${edu.universityName} (${edu.startDate} to ${edu.endDate})`
+  ).join("\n");
 
   const skillsSummary = Skills.map(
     (skill) => `• ${skill.name} (Rating: ${skill.rating}/100)`
@@ -49,6 +47,7 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
   Skills:
   ${skillsSummary || "No skills provided."}
 `;
+  console.log(promptForAI);
 
   return promptForAI;
 }

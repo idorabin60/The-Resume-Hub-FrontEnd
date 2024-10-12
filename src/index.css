@@ -3,21 +3,21 @@
   @tailwind utilities;
 
 
-  @media print{
-    #no-print{
-      display: none;
+  @media print {
+    body * {
+      visibility: hidden;
     }
-
-    #print-area{
-      display: block;
+    #resume-preview, #resume-preview * {
+      visibility: visible;
     }
-
-    body{
-      margin: 0;
-      padding: 0;
-      box-shadow: none;
+    #resume-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
     }
   }
+  
 
   @page{
     size: auto;
