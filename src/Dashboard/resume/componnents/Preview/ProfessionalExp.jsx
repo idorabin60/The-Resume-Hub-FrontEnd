@@ -1,8 +1,5 @@
 /* eslint-disable react/prop-types */
 function ProfessionalExp({resumeInfo}) {
-    if (!resumeInfo?.Experience?.length) {
-        return null; // Return null if no skills are present
-      }
   return (
     <div className="my-6">
         <h2 className="text-center font-bold text-sm mb-2">Proffesional Exp</h2>

@@ -7,10 +7,23 @@ import SummeryForm from "./Forms/SummeryForm";
 import SkillsForm from "./Forms/SkillsForm";
 import LanguagesForm from "./Forms/LanguagesForm";
 import EducationalForm from "./Forms/EducationForm";
+import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
+
+
+
 
 function FormSection() {
+ 
   const [activeIndex, setActiveIndex] = useState(1);
   const [enableNavigationButtons, setEnableNavigationButtons] = useState(true);
+  const { resumeId } = useParams();
+  const navigation = useNavigate();
+
+  const navigateToDownLoadPage = ()=>{
+    navigation("/Download/" + resumeId + "/DownloadView");
+  }
+
 
   const goToNextPage = () => {
     setActiveIndex((prevIndex) => prevIndex + 1);
@@ -24,8 +37,8 @@ function FormSection() {
   return (
     <div>
       <div className="flex justify-between">
-        <Button variant="outline" className="w-full sm:w-auto" >
-          Theme
+        <Button onClick={navigateToDownLoadPage} variant="outline" className="w-full sm:w-auto" >
+          Download View
         </Button>
 
         <div className="flex space-x-2">
@@ -57,9 +70,9 @@ function FormSection() {
         <PersonalDetailForm
           enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
-      ) : activeIndex === 2 ? (
-        <LanguagesForm enableNavigationButtons={(v) => setEnableNavigationButtons(v)} />
       ) : activeIndex === 3 ? (
+        <LanguagesForm enableNavigationButtons={(v) => setEnableNavigationButtons(v)} />
+      ) : activeIndex === 2? (
         <ProfessionalExpForm
           enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
@@ -67,11 +80,11 @@ function FormSection() {
         <SkillsForm
           enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
-      ) : activeIndex === 5 ? (
+      ) : activeIndex === 6 ? (
         <SummeryForm
           enableNavigationButtons={(v) => setEnableNavigationButtons(v)}
         />
-      ) : activeIndex === 6 ? (
+      ) : activeIndex === 5 ? (
         <EducationalForm enableNavigationButtons={(v) => setEnableNavigationButtons(v)} />
       ) : null}
     </div>

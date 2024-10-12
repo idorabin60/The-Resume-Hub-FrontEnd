@@ -16,10 +16,11 @@ const SkillsContainer = styled.div`
 `;
 
 function Skils({ resumeInfo }) {
-  // Check if resumeInfo exists and has skills
-  if (!resumeInfo?.Skills?.length) {
-    return null; // Return null if no skills are present
-  }
+  // console.log("asasd")
+  // // Check if resumeInfo exists and has skills
+  // if (!resumeInfo?.Skills?.length) {
+  //   return null; // Return null if no skills are present
+  // }
 
   return (
     <div className="text-center">

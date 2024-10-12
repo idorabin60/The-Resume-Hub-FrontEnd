@@ -2,7 +2,6 @@
 import { useUser } from "@clerk/clerk-react";
 import GlobalApi from "../../service/GlobalApi";
 import { useEffect, useState } from "react";
-import ResumeItemCard from "./ResumeItemCard";
 import {
   PlusCircle,
   FileText,
@@ -23,14 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { v4 as uuidv4 } from "uuid";
 import { Loader2 } from "lucide-react";
 
