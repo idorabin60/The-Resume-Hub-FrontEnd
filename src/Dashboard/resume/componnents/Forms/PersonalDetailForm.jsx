@@ -7,6 +7,7 @@ import GlobalApi from "../../../../../service/GlobalApi";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { GetCurrentDate } from "../../../../../service/GetCurrentDate";
 
 function PersonalDetailForm({ enableNavigationButtons }) {
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
@@ -25,13 +26,18 @@ function PersonalDetailForm({ enableNavigationButtons }) {
       linkdin: resumeInfo?.linkdin || '',
       address: resumeInfo?.address || '',
       company: resumeInfo?.company || '',
+      jobLink: resumeInfo?.jobLink || '',
     });
   }, [resumeInfo]);
 
   const onSave = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const data = formData;
+    const currentDate = GetCurrentDate();
+    const data = {
+      ...formData,
+      lastUpdated: currentDate, // Include the lastUpdated field
+    };
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
       .then((res) => {
         toast({
@@ -160,7 +166,15 @@ function PersonalDetailForm({ enableNavigationButtons }) {
               name="company"
               value={formData.company}
               onChange={handleInputOnChange}
-              required
+              className="w-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-gray-800 font-semibold">Job Link</label>
+            <Input
+              name="jobLink"
+              value={formData.jobLink}
+              onChange={handleInputOnChange}
               className="w-full"
             />
           </div>

@@ -6,55 +6,33 @@ import { LoaderCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import GlobalApi from "../../../../../service/GlobalApi";
-import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
-import { ResumeInfoParserForPrompt } from "../../../../../service/ResumeInfoParserForPrompt";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 // eslint-disable-next-line react/prop-types
-function SummeryForm({ enableNavigationButtons }) {
+function AboutTheJobForm({ enableNavigationButtons }) {
   const [resumeInfo, setResumeInfo] = useContext(ResumeInfoContext);
-  const [summery, setSummery] = useState(resumeInfo?.summery || "");
+  const [aboutTheJob, setAboutTheJob] = useState(resumeInfo?.aboutTheJob || "");
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const { toast } = useToast();
 
-  const GenerateSummeryFromAI = async () => {
-    setIsLoading(true);
-    try {
-      const data_for_parsing = ResumeInfoParserForPrompt(resumeInfo);
-      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(
-        data_for_parsing
-      );
-      setSummery(GeminaiSummeryResult.response.text());
-      toast({
-        description: "Summary has been generated successfully using AI.",
-      });
-    } catch {
-      toast({
-        description:
-          "AI generation failed. Please try again or contact Ido Rabin at 052-7062800.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     setResumeInfo((prevResumeInfo) => ({
       ...prevResumeInfo,
-      summery,
+      aboutTheJob,
     }));
-  }, [summery, setResumeInfo]);
+  }, [aboutTheJob, setResumeInfo]);
 
   const onSave = (e) => {
     e.preventDefault();
     setIsLoading(true);
     enableNavigationButtons(false);
-    const data = { summery };
+    const data = { aboutTheJob };
     GlobalApi.updateResumePersonalDetail(params?.resumeId, data)
       .then(() => {
         toast({
-          description: "Your summary has been saved.",
+          description: "Your about the job data has been saved.",
         });
       })
       .catch((err) => {
@@ -72,31 +50,17 @@ function SummeryForm({ enableNavigationButtons }) {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader className="border-b">
-        <h2 className="text-2xl font-bold">Summary</h2>
+        <h2 className="text-2xl font-bold">About the job (optional)</h2>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSave} className="space-y-5">
-          <div className="flex justify-between items-center">
-            <label className="text-gray-800 font-semibold">Add Summary:</label>
-            <Button
-              size="sm"
-              type="button"
-              onClick={GenerateSummeryFromAI}
-              className="w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <LoaderCircle className="animate-spin" />
-              ) : (
-                "Generate summary with AI"
-              )}
-            </Button>
-          </div>
 
           <Textarea
-            value={summery}
-            required
-            onChange={(e) => setSummery(e.target.value)}
+            value={aboutTheJob}
+            onChange={(e) => setAboutTheJob(e.target.value)}
             className="w-full"
+            placeholder="Enter details about the job here..."
+
           />
 
           <div className="flex justify-end mt-6">
@@ -110,4 +74,4 @@ function SummeryForm({ enableNavigationButtons }) {
   );
 }
 
-export default SummeryForm;
+export default AboutTheJobForm ;

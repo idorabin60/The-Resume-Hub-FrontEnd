@@ -54,7 +54,7 @@ export default function DownloadView() {
           
           {isLoading ? (
             <div className="flex justify-center items-center h-[297mm]">
-              <Loader2 className="h-8 w-8 animate-spin" />
+              <Loader2 className="h-16 w-16 animate-spin" />
             </div>
           ) : resumeInfo ? (
             <div id="resume-preview" className="bg-white shadow-lg w-[210mm] h-[297mm] mx-auto">
