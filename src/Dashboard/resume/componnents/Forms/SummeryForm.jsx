@@ -38,6 +38,7 @@ function SummeryForm({ enableNavigationButtons }) {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     setResumeInfo((prevResumeInfo) => ({

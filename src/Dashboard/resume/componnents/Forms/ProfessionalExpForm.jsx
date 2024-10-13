@@ -1,6 +1,11 @@
 import { useState, useContext, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
@@ -19,8 +24,13 @@ function ProfessionalExpForm() {
   const params = useParams();
   const { toast } = useToast();
 
-  const formatWorkSummeryPromptTemplate = "Please correct any grammar mistakes in this text and format it according to standard CV work summary guidelines. Only return the formatted text without any additional explanations or comments.";
-
+  const formatWorkSummaryPromptTemplate = `
+  Please rewrite the following text to correct any grammar mistakes and ensure it's concise and clear. Format it as a professional CV work summary. 
+  - Avoid excessive bold or italic formatting.
+  - Use bullet points to highlight key responsibilities and achievements, but make the overall tone natural and human-written.
+  - Keep the language professional but not overly formal.
+  Return only the formatted text, without additional explanations or comments.
+  `;
   useEffect(() => {
     if (resumeInfo?.Experience && resumeInfo.Experience.length > 0) {
       setExperinceList(resumeInfo.Experience);
@@ -62,15 +72,39 @@ function ProfessionalExpForm() {
       Experience: newEntries,
     }));
   };
+  const handleKeyDown = (index, event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent default form submission or any other unwanted behavior
+      const { name, value } = event.target;
+  
+      // Add the new line character at the current caret position
+      const newValue = value + "\n";
+      
+      // Update the experience list with the new value containing the newline
+      const newEntries = experinceList.slice();
+      newEntries[index][name] = newValue;
+      setExperinceList(newEntries);
+      setResumeInfo((prevState) => ({
+        ...prevState,
+        Experience: newEntries,
+      }));
+    }
+  };
+  
 
   const formatJobSummeryWithAi = async (index) => {
     setIsLoading(true);
     try {
       const currnetJobSummery = experinceList[index].workSummery;
-      const finalPromptForAI = formatWorkSummeryPromptTemplate + " " + currnetJobSummery;
-      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(finalPromptForAI);
+      const finalPromptForAI =
+        formatWorkSummaryPromptTemplate + "\n" + currnetJobSummery;
+      console.log(finalPromptForAI);
+      const GeminaiSummeryResult = await GeminaiChatSession.sendMessage(
+        finalPromptForAI
+      );
       const newEntries = experinceList.slice();
-      newEntries[index].workSummery = await GeminaiSummeryResult.response.text();
+      newEntries[index].workSummery =
+        await GeminaiSummeryResult.response.text();
       setExperinceList(newEntries);
       setResumeInfo((prevState) => ({
         ...prevState,
@@ -179,10 +213,20 @@ function ProfessionalExpForm() {
                   rows={4}
                   value={expField.workSummery}
                   onChange={(event) => handleChange(index, event)}
+                  onKeyDown={(event) => handleKeyDown(index, event)} // New keydown handler for special cases
+
                 />
                 <div className="flex justify-end mt-2">
-                  <Button variant="outline" size="sm" onClick={() => formatJobSummeryWithAi(index)}>
-                    {isLoading ? <LoaderCircle className="animate-spin" /> : "Format with AI"}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => formatJobSummeryWithAi(index)}
+                  >
+                    {isLoading ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : (
+                      "Format with AI"
+                    )}
                   </Button>
                 </div>
               </div>

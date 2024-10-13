@@ -29,13 +29,13 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
   ).join("\n");
 
   const aboutTheJobText = aboutTheJob
-    ? `Please ensure the summary fits the following job description in the most accurate way: ${aboutTheJob}`
+    ? `Please ensure the summary reflects my strong alignment with common industry expectations and required skills, as outlined in the job description below.`
     : "";
 
   const promptForAI = `
   I would like you to create a professional and impactful 4-6 line summary for my CV. Please focus on highlighting my key strengths, emphasizing my experience, skills, and education, while also showcasing my personal qualities and work ethic. Do not mention any specific company names. ${
     aboutTheJob
-      ? "Additionally, tailor the summary to fit the requirements and expectations outlined in the job description below."
+      ? "Additionally, ensure the summary reflects my general alignment with the job expectations described below but dont mention the company name or anything related to the company itself."
       : ""
   } Write the summary in a confident and polished tone, as though I am writing it myself. Here is my relevant information:
 
@@ -55,7 +55,8 @@ export function ResumeInfoParserForPrompt(resumeInfo) {
   ${skillsSummary || "No skills provided."}
 
   ${aboutTheJobText}
-`;
+  `;
+
   console.log(promptForAI);
 
   return promptForAI;
