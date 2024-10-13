@@ -2,8 +2,8 @@
 import EducationComponnent from "./EducationComponnent";
 
 function EducationVercel({resumeInfo}) {
-  if(!resumeInfo.Educations.length){
-    return null
+  if (!resumeInfo || !resumeInfo.Educations || !resumeInfo.Educations.length) {
+    return null;
   }
   return (
     <div>
