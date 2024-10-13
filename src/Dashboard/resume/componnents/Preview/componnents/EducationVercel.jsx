@@ -2,6 +2,9 @@
 import EducationComponnent from "./EducationComponnent";
 
 function EducationVercel({resumeInfo}) {
+  if(!resumeInfo.Educations.length){
+    return null
+  }
   return (
     <div>
       <section className="mb-8">

@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
 import ExperienceItemVercel from "./ExperienceItemVercel"
 function ExperienceVercel({resumeInfo}) {
+  if(!resumeInfo?.Experience.length){
+    return null;
+  }
     return (
     <div className="col-span-2">
     <section className="mb-8">

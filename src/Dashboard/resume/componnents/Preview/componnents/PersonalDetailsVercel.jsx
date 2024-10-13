@@ -11,7 +11,7 @@ function PersonalDetailsVercel({ resumeInfo }) {
         <Mail className="w-4 h-4 ml-2" />
         {resumeInfo?.email}
       </a>
-      <a
+      {/* <a
         href={resumeInfo?.linkedin}
         className="flex items-center justify-end text-gray-600 hover:text-blue-600"
         target="_blank" // Opens in a new tab
@@ -19,7 +19,7 @@ function PersonalDetailsVercel({ resumeInfo }) {
       >
         <Linkedin className="w-4 h-4 ml-2" />
         LinkedIn Profile
-      </a>
+      </a> */}
       <span className="flex items-center justify-end text-gray-600">
         <MapPin className="w-4 h-4 ml-2" />
         {resumeInfo?.address}
