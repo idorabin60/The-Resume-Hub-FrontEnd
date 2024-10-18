@@ -122,7 +122,7 @@ export default function ResumeViewList() {
             <div className="mb-6 flex items-center">
               <Input
                 type="text"
-                placeholder="Enter new CV name"
+                placeholder="Enter CV title"
                 value={resumeTitle}
                 onChange={(e) => setResumeTitle(e.target.value)}
                 className="mr-2"
@@ -161,7 +161,7 @@ export default function ResumeViewList() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[300px]">CV Name</TableHead>
+                    <TableHead className="w-[300px]">CV Title</TableHead>
                     <TableHead>Company</TableHead>
                     <TableHead>Job Posting</TableHead>
                     <TableHead className="text-right">Last Updated</TableHead>
