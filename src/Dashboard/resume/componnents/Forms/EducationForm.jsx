@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { Input } from "@/components/ui/input";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import { Button } from "@/components/ui/button";
@@ -7,21 +7,31 @@ import { useParams } from "react-router-dom";
 import GlobalApi from "../../../../../service/GlobalApi";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import axios from "axios";
-import { cn } from "@/lib/utils";
 import {
-  Command,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ChevronsUpDown, Check } from "lucide-react";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const israeliUniversities = {
+  technion: "Technion - Israel Institute of Technology",
+  hebrewu: "Hebrew University of Jerusalem",
+  telaviv: "Tel Aviv University",
+  bgu: "Ben-Gurion University of the Negev",
+  haifa: "University of Haifa",
+  biu: "Bar-Ilan University",
+  weizmann: "Weizmann Institute of Science",
+  openu: "Open University of Israel",
+  idc: "Reichman University (IDC Herzliya)",
+  ariel: "Ariel University",
+  tau: "Tel Aviv University",
+  afeka: "Afeka Tel Aviv Academic College of Engineering",
+};
 
 function EducationalForm() {
   const [educationList, setEducationList] = useState([]);
@@ -29,41 +39,7 @@ function EducationalForm() {
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const { toast } = useToast();
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
-  const [filteredUniversities, setFilteredUniversities] = useState([]);
-
-  useEffect(() => {
-
-    const fetchUniversities = async () => {
-      if (search.length >= 3) {
-        try {
-          const response = await axios.get(
-            `https://universities.hipolabs.com/search?name=${search}`
-          );
-          if (Array.isArray(response.data)) {
-            const filtered = response.data.map((uni) => uni.name);
-            setFilteredUniversities(filtered);
-            console.log(filtered); // Log the filtered list directly after setting it
-
-
-            // Use `useEffect` for logging updated state
-            setOpen(true); // Keep it open when searching
-          } else {
-            setFilteredUniversities([]);
-          }
-        } catch (error) {
-          console.error("Error fetching universities:", error);
-        }
-      } else {
-        setFilteredUniversities([]); // Reset the university list, but don't close
-      }
-    };
-
-    fetchUniversities();
-  }, [search]);
-
-  // Additional useEffect to log when `filteredUniversities` actually changes
+  const [openIndex, setOpenIndex] = useState(null); // Changed
 
   const AddNewEducation = () => {
     setEducationList([
@@ -79,23 +55,6 @@ function EducationalForm() {
     ]);
   };
 
-  useEffect(() => {
-    if (resumeInfo?.Educations && resumeInfo.Educations.length > 0) {
-      setEducationList(resumeInfo.Educations);
-    }
-  }, [resumeInfo]);
-
-  const RemoveEducation = () => {
-    setEducationList((prevEducationList) => {
-      const updatedList = prevEducationList.slice(0, -1);
-      setResumeInfo((prevState) => ({
-        ...prevState,
-        Educations: updatedList,
-      }));
-      return updatedList;
-    });
-  };
-
   const handleChange = (index, event) => {
     const newEntries = educationList.slice();
     const { name, value } = event.target;
@@ -106,15 +65,16 @@ function EducationalForm() {
       Educations: newEntries,
     }));
   };
-  const handleInstituteSelect = (index, institute) => {
+
+  const handleInstituteSelect = (index, instituteName) => {
     const newEntries = educationList.slice();
-    newEntries[index].institute = institute;
+    newEntries[index].institute = instituteName;
     setEducationList(newEntries);
     setResumeInfo((prevState) => ({
       ...prevState,
       Educations: newEntries,
     }));
-    setOpen(false); // Close the dropdown only after selection
+    setOpenIndex(null); // Changed
   };
 
   const onSave = () => {
@@ -154,58 +114,34 @@ function EducationalForm() {
         {educationList.map((educationField, index) => (
           <Card className="mb-6" key={index}>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Institute Search */}
+              {/* Institute Dropdown */}
               <div className="space-y-2">
                 <label className="text-gray-800 font-semibold">Institute</label>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={open}
-                      className="w-full justify-between"
-                    >
-                      {educationField.institute || "Select university..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-full p-0"
-                    key={filteredUniversities.join(",")}
-                  >
-                    <Command>
-                      <CommandInput
-                        placeholder="Search university..."
-                        value={search}
-                        onValueChange={setSearch}
-                      />
-                      <CommandList>
-                        {filteredUniversities.length > 0 ? (
-                          filteredUniversities.map((university, i) => (
-                            <CommandItem
-                              key={`${university}-${i}`} // Ensure unique keys
-                              onSelect={() =>
-                                handleInstituteSelect(index, university)
-                              }
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  educationField.institute === university
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {university}
-                            </CommandItem>
-                          ))
-                        ) : (
-                          <CommandEmpty>No university found.</CommandEmpty>
+
+                <Select
+                  value={educationField.institute}
+                  onValueChange={(value) => handleInstituteSelect(index, value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a university">
+                      {educationField.institute || "Select a university"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Israeli Universities</SelectLabel>
+                      <ScrollArea className="h-[200px] w-full rounded-md border">
+                        {Object.entries(israeliUniversities).map(
+                          ([key, label]) => (
+                            <SelectItem key={key} value={label}>
+                              {label}
+                            </SelectItem>
+                          )
                         )}
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                      </ScrollArea>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               {/* Degree */}
               <div className="space-y-2">
@@ -263,11 +199,8 @@ function EducationalForm() {
           <Button
             variant="outline"
             className="w-full sm:w-auto"
-            onClick={RemoveEducation}
+            onClick={onSave}
           >
-            Delete Last Education
-          </Button>
-          <Button className="w-full sm:w-auto" onClick={onSave}>
             {isLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
           </Button>
         </div>
