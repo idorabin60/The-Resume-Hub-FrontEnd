@@ -34,22 +34,19 @@ function EducationalForm() {
   const [filteredUniversities, setFilteredUniversities] = useState([]);
 
   useEffect(() => {
-    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  
+
     const fetchUniversities = async () => {
       if (search.length >= 3) {
         try {
           const response = await axios.get(
-            `http://universities.hipolabs.com/search?name=${search}`
+            `https://universities.hipolabs.com/search?name=${search}`
           );
           if (Array.isArray(response.data)) {
             const filtered = response.data.map((uni) => uni.name);
             setFilteredUniversities(filtered);
             console.log(filtered); // Log the filtered list directly after setting it
-  
-            // Add a delay of 2 seconds before logging the next line
-            await delay(2000);
-            
+
+
             // Use `useEffect` for logging updated state
             setOpen(true); // Keep it open when searching
           } else {
@@ -62,13 +59,12 @@ function EducationalForm() {
         setFilteredUniversities([]); // Reset the university list, but don't close
       }
     };
-  
+
     fetchUniversities();
   }, [search]);
-  
+
   // Additional useEffect to log when `filteredUniversities` actually changes
-  
-  
+
   const AddNewEducation = () => {
     setEducationList([
       ...educationList,
@@ -173,38 +169,42 @@ function EducationalForm() {
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" key={filteredUniversities.join(",")}>
-  <Command>
-    <CommandInput
-      placeholder="Search university..."
-      value={search}
-      onValueChange={setSearch}
-    />
-    <CommandList>
-      {filteredUniversities.length > 0 ? (
-        filteredUniversities.map((university, i) => (
-          <CommandItem
-            key={`${university}-${i}`} // Ensure unique keys
-            onSelect={() => handleInstituteSelect(index, university)}
-          >
-            <Check
-              className={cn(
-                "mr-2 h-4 w-4",
-                educationField.institute === university
-                  ? "opacity-100"
-                  : "opacity-0"
-              )}
-            />
-            {university}
-          </CommandItem>
-        ))
-      ) : (
-        <CommandEmpty>No university found.</CommandEmpty>
-      )}
-    </CommandList>
-  </Command>
-</PopoverContent>
-
+                  <PopoverContent
+                    className="w-full p-0"
+                    key={filteredUniversities.join(",")}
+                  >
+                    <Command>
+                      <CommandInput
+                        placeholder="Search university..."
+                        value={search}
+                        onValueChange={setSearch}
+                      />
+                      <CommandList>
+                        {filteredUniversities.length > 0 ? (
+                          filteredUniversities.map((university, i) => (
+                            <CommandItem
+                              key={`${university}-${i}`} // Ensure unique keys
+                              onSelect={() =>
+                                handleInstituteSelect(index, university)
+                              }
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  educationField.institute === university
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {university}
+                            </CommandItem>
+                          ))
+                        ) : (
+                          <CommandEmpty>No university found.</CommandEmpty>
+                        )}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
                 </Popover>
               </div>
               {/* Degree */}
