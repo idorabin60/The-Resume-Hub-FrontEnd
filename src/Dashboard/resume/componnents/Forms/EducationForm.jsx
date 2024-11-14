@@ -1,5 +1,6 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { Plus, Trash2 } from "lucide-react";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
@@ -41,6 +42,21 @@ function EducationalForm() {
   const { toast } = useToast();
   const [openIndex, setOpenIndex] = useState(null); // Changed
 
+  useEffect(() => {
+    if (resumeInfo?.Educations && resumeInfo.Educations.length > 0) {
+      setEducationList(resumeInfo.Educations);
+    }
+  }, [resumeInfo]);
+  const RemoveEducational = () => {
+    setEducationList((prevEducationalList) => {
+      const updatedList = prevEducationalList.slice(0, -1);
+      setResumeInfo((prevState) => ({
+        ...prevState,
+        Educations: updatedList,
+      }));
+      return updatedList;
+    });
+  };
   const AddNewEducation = () => {
     setEducationList([
       ...educationList,
@@ -195,6 +211,13 @@ function EducationalForm() {
             onClick={AddNewEducation}
           >
             Add New Education
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={RemoveEducational}
+          >
+            <Trash2 className="mr-2 h-4 w-4" /> Remove Last Experience
           </Button>
           <Button
             variant="outline"
