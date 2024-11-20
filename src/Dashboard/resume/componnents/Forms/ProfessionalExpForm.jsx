@@ -16,6 +16,8 @@ import GlobalApi from "../../../../../service/GlobalApi";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { GeminaiChatSession } from "../../../../../service/GeminaiApi";
+const apiKey = import.meta.env.VITE_GEMINAMI_AI_API_KEY;
+
 
 function ProfessionalExpForm() {
   const [experinceList, setExperinceList] = useState([]);
@@ -111,7 +113,8 @@ function ProfessionalExpForm() {
         Experience: newEntries,
       }));
       toast({ description: "Formatted work experience with AI." });
-    } catch {
+    } catch(error) {
+      console.log(error)
       toast({ description: "Something went wrong." });
     } finally {
       setIsLoading(false);
