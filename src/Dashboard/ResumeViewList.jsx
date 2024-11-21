@@ -1,15 +1,7 @@
 import { useUser } from "@clerk/clerk-react";
 import GlobalApi from "../../service/GlobalApi";
 import { useEffect, useState } from "react";
-import {
-  LoaderCircle,
-  PlusCircle,
-  FileText,
-  Users,
-  Briefcase,
-  ExternalLink,
-  Loader2,
-} from "lucide-react";
+import { LoaderCircle, PlusCircle, FileText, Users, Briefcase, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
@@ -24,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { v4 as uuidv4 } from "uuid";
 import { GetCurrentDate } from "../../service/GetCurrentDate";
-//sdflskdjflskdjflksjdf
+
 export default function ResumeViewList() {
   const { user } = useUser();
   const [resumeList, setResumeList] = useState([]);
@@ -75,6 +67,15 @@ export default function ResumeViewList() {
       console.error("Error fetching resumes:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (documentId) => {
+    try {
+      await GlobalApi.deleteResume(documentId);
+      setResumeList(resumeList.filter(cv => cv.documentId !== documentId));
+    } catch (error) {
+      console.error("Error deleting resume:", error);
     }
   };
 
@@ -165,6 +166,7 @@ export default function ResumeViewList() {
                     <TableHead>Company</TableHead>
                     <TableHead>Job Posting</TableHead>
                     <TableHead className="text-right">Last Updated</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -197,6 +199,14 @@ export default function ResumeViewList() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">{cv.lastUpdated}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          onClick={() => handleDelete(cv.documentId)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
