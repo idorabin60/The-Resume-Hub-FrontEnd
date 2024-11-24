@@ -14,7 +14,7 @@ const model = genAI.getGenerativeModel({
 const generationConfig = {
   temperature: 1,
   topP: 0.95,
-  topK: 64,
+  topK: 40, // Adjusted to a valid value
   maxOutputTokens: 8192,
   responseMimeType: "text/plain",
 };

@@ -107,6 +107,7 @@ function ProfessionalExpForm() {
       const newEntries = experinceList.slice();
       newEntries[index].workSummery =
         await GeminaiSummeryResult.response.text();
+        console.log(GeminaiSummeryResult)
       setExperinceList(newEntries);
       setResumeInfo((prevState) => ({
         ...prevState,
